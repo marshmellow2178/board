@@ -1,0 +1,25 @@
+<html layout:decorate = "~{layout}">
+<main layout:fragment = "content" class = "container">
+    <form th:action = "@{/member/signup}" th:object="${signUpForm}" method="post">
+        <fieldset>
+            <legend>회원가입</legend>
+            <div th:replace="~{form_err :: formErrFragment}"></div>
+        
+            <label for="uid">ID</label>
+            <input type="text" th:field = "*{uid}" required>
+    
+            <label for="pw">PW</label>
+            <input type="password" th:field="*{pw}" required>
+    
+            <label for="pw2">PW Check</label>
+            <input type="password" th:field="*{pw2}" required>
+    
+            <label for="email">Email</label>
+            <input type="email" th:field="*{email}" required>
+    
+            <input type="submit">
+        </fieldset>
+        
+    </form>
+</main>
+</html>

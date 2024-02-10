@@ -1,0 +1,16 @@
+<nav th:fragment = "navFragment">
+    <ul>
+        <li><b><a href="/">게시판</a></b></li>
+    </ul>
+    <ul>
+        <th:block sec:authorize = "isAnonymous()">
+            <li><a th:href = "@{/member/login}">Login</a></li>
+            <li><a th:href = "@{/member/signup}">Sign Up</a></li>
+        </th:block>
+        <th:block sec:authorize = "isAuthenticated()">
+            <li><a th:href = "@{/member/logout}">Logout</a></li>
+            <li><a th:href = "@{/mypage/}">마이페이지</a></li>
+        </th:block>
+        <li><a href = "/h2">데이터 콘솔</a></li>
+    </ul>
+</nav>

@@ -1,5 +1,0 @@
-<div th:fragment="formErrFragment" 
-th:if="${#fields.hasAnyErrors()}" class="err">
-    <p th:each="err:${#fields.allErrors()}"
-    th:text="${err}"></p>
-</div>

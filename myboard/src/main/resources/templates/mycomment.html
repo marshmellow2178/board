@@ -1,0 +1,35 @@
+<html layout:decorate = "~{layout}">
+<main layout:fragment = "content" class = "container">
+    <nav th:replace = "~{mypage_nav::mypageFrag}"></nav>
+    <table>
+        <tr>
+            <th width = "40%">내용</th>
+            <th>작성일시</th>
+            <th>추천</th>
+        </tr>
+
+        <tr th:each = "item: ${cList}">
+            <td>
+                <a th:href = "@{|/post/detail/${item.post.id}|}"
+                th:text = "${item.content}"></a>
+            </td>
+            <td th:text = "${#temporals.format(item.createDate, 'yy-MM-dd HH:mm:ss')}"></td>
+            <td th:text = "${#lists.size(item.voter)}"></td>
+        </tr>
+    </table>
+
+    <div class = "paging" th:if = "${!cList.isEmpty()}">
+        <p th:if = "${cList.hasPrevious}">
+            <a th:href = "@{|/member/comment?page=${cList.number}|}">Prev</a>
+        </p>
+        <p th:each="idx:${#numbers.sequence(1, cList.totalPages)}"
+        th:classappend = "${idx == cList.number + 1} ? 'active'"
+        th:if = "${idx >= cList.number-1 and idx <= cList.number+3}">
+            <a th:text = "${idx}" th:href = "@{|/member/comment?page=${idx}|}"></a>
+        </p>
+        <p th:if = "${cList.hasNext}">
+            <a th:href = "@{|/member/comment?page=${cList.number+2}|}">Next</a>
+        </p>
+    </div>
+</main>
+</html>

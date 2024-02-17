@@ -1,0 +1,14 @@
+<html layout:decorate = "~{layout}">
+<main layout:fragment = "content" class = "container">
+    <form th:action = "@{/member/pwfind}" th:object = "${pwFindForm}" method = "post">
+        <fieldset>
+            <legend>비밀번호 찾기</legend>
+            <div th:replace="~{form_err :: formErrFragment}"></div>
+            <input type="text" th:field = "*{uid}" placeholder="ID" required>
+            <input type="email" th:field = "*{email}" placeholder="EMAIL" required>
+            <input type="submit">
+        </fieldset>
+    </form>
+    <div th:if = "${newPw}!=null" th:text = "|새 비밀번호: ${newPw}|"></div>
+</main>
+</html>

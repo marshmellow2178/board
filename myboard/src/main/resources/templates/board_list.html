@@ -1,0 +1,99 @@
+<html layout:decorate = "~{layouts/layout}">
+<main layout:fragment = "content" class = "container">
+	<h4 class = "my-3"><b>자유게시판</b></h4>
+	<form class = "input-group align-items-center mb-3">
+		<input type = "number"
+		class = "d-none"
+		th:value = "${param.page}"
+		id = "page_input"
+		name = "page">
+		<span th:text = "|${boardPage.totalElements}개의 글 검색됨|"
+		class = "input-group-text"></span>
+		<div class = "col-2">
+			<select class = "form-select"
+			id = "sort_select"
+			name = "sort">
+				<option value = "d"
+				th:selected = "${#strings.equals(param.sort, 'd')}">최신순</option>
+				<option value = "r"
+				th:selected = "${#strings.equals(param.sort, 'r')}">추천순</option>
+			</select>
+		</div>
+		<p class = "col-3"></p>
+		<input type = "search" 
+		th:value = "${param.keyword}"
+		placeholder = "제목으로 검색"
+		name = "keyword"
+		class = "form-control col-4">
+		<input type = "submit" value = "검색"
+		class = "btn btn-warning">
+
+	</form>
+    <table class = "table ">
+    	<thead class = "table-warning">
+    	<tr>
+    		<th style = "width: 40%">제목</th>
+    		<th>작성자</th>
+    		<th>추천</th>
+    		<th>작성일</th>
+    	</tr>
+    	</thead>
+    	<tr th:each = "board: ${boardPage}">
+    		<td>
+    			<a th:href = "@{|/board/detail?id=${board.seq}|}"
+    			th:text = "${board.title}">
+    			</a>
+    		</td>
+    		<td th:text = "${board.user.nickname}"></td>
+    		<td th:text = "${board.like}"></td>
+    		<td th:text = "${board.createDate}"></td>
+    	</tr>    		
+    </table>
+    <a href = "/board/create" class = "btn btn-warning">등록</a>
+    <ul class = "pagination justify-content-center" 
+    th:if = "${boardPage.totalPages} != 0"
+ 	th:with = "block = 10,
+ 	total = ${boardPage.totalPages},
+ 	number = ${boardPage.number+1},
+ 	sidx = ${((number-1)/block)*block+1}, 
+ 	eidx = ${(total > sidx+(block-1) ? sidx+(block-1) : total)}">
+ 		<li class = "page-item" 
+ 		th:classappend="${number} == 1 ? disabled">
+ 			<a class = "page-link" 
+ 			th:data-page = "${number-1}">&lt;</a>
+ 		</li>
+ 		<th:block th:each = "idx:${#numbers.sequence(sidx, eidx)}">
+ 		<li class = "page-item" 
+ 		th:classappend="${number}==${idx} ? active">
+ 			<a class = "page-link" 
+ 			th:text = "${idx}" 
+ 			th:data-page = "${idx}" ></a>
+ 		</li>
+ 		</th:block>
+ 		<li class = "page-item" 
+ 		th:classappend="!${boardPage.hasNext} ? disabled">
+ 			<a class = "page-link" 
+ 			th:data-page = "${number+1}">&gt;</a>
+ 		</li>
+	</ul>
+	
+	<script>
+		let navBtn = document.querySelector("#board_free");
+		let form = document.querySelector("form");
+		let sortSelect = document.querySelector("#sort_select");
+		let pageInput = document.querySelector("#page_input");
+		let pageLinks = document.querySelectorAll(".page-link");
+		
+		sortSelect.addEventListener('change', function(){
+			form.submit();
+		})
+		for(let i = 0;i<pageLinks.length;i++){
+			pageLinks[i].addEventListener('click', function(event){
+				pageInput.value = this.dataset.page;
+				form.submit();
+			});
+		}
+		navBtn.classList.add("active");
+	</script>
+</main>    
+</html>

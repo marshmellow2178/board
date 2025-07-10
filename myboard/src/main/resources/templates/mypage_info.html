@@ -1,56 +1,53 @@
-<html layout:decorate = "~{layout}">
-<main layout:fragment = "content" class = "container">
-    <nav th:replace = "~{mypage_nav::mypageFrag}"></nav>
-    <table>
-        <tr>
-            <th colspan="2">회원정보</th>
-        </tr>
-        <tr>
-            <td>작성글</td>
-            <td th:text = "|${#lists.size(member.postList)} 개|"></td>
-        </tr>
-        <tr>
-            <td>작성댓글</td>
-            <td th:text = "|${#lists.size(member.commentList) + #lists.size(member.postList)} 개|"></td>
-        </tr>
-    </table>
-    <!-- <a sec:authorize = "isAuthenticated()" th:href = "@{/member/pwchange}">비밀번호 변경</a> -->
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate = "layout">
+<main layout:fragment = "content">
+    <div class="row">
+        <aside class="col-md-3 mb-4">
+            <nav th:replace = "~{mypage_nav :: mypageFrag}"></nav>
+        </aside>
+        <div class="col-md-9">
 
-    <table>
-        <tr>
-            <th colspan="3" th:text = "|작성글: ${#lists.size(member.replyList)} 개|"></th>
-        </tr>
-        <tr th:each = "post: ${member.postList}" th:if="${postStat.index}<5">
-            <td th:text = "${post.category.name}"></td>
-            <td>
-                <a th:href = "@{|/post/detail/${post.id}|}" th:text = "${post.title}"></a>
-            </td>
-            <td th:text = "${#temporals.format(post.createDate, 'yy-MM-dd HH:mm:ss')}"></td>
-        </tr>
-    </table>
+            <div class="card mb-4">
+                <div class="card-body d-flex align-items-center">
+                    <img src="/images/default-avatar.png" class="rounded-circle me-3" style="width:72px;height:72px;" alt="프로필">
+                    <div>
+                        <h5 th:text="${user.username}">username</h5>
+                        <p class="mb-1" th:text="${user.email}">email@example.com</p>
+                        <small class="text-muted">
+                            가입일: <span th:text="${#temporals.format(user.createdAt,'yyyy-MM-dd')}">2025-07-10</span><br/>
+                            마지막 로그인: <span th:text="${#temporals.format(user.lastLoginAt,'yyyy-MM-dd HH:mm')}">2025-07-10 14:23</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <!-- 2. 활동 요약 -->
+            <section class="row text-center mb-4">
+                <div class="col">
+                    <div class="h4" th:text="${postCount}">0</div>
+                    <p class="mb-0">내 글</p>
+                </div>
+                <div class="col">
+                    <div class="h4" th:text="${commentCount}">0</div>
+                    <p class="mb-0">내 댓글</p>
+                </div>
+                <div class="col">
+                    <div class="h4" th:text="${likeCount}">0</div>
+                    <p class="mb-0">내 좋아요</p>
+                </div>
+            </section>
 
-    <table>
-        <tr>
-            <th colspan="2" th:text = "|댓글: ${#lists.size(member.commentList)} 개|"></th>
-        </tr>
-        <tr th:each = "comment: ${member.commentList}" th:if="${commentStat.index}<5">
-            <td>
-                <a th:href = "@{|/post/detail/${comment.post.id}|}" th:text = "${comment.content}"></a>
-            </td>
-            <td th:text = "${#temporals.format(comment.createDate, 'yy-MM-dd HH:mm:ss')}"></td>
-        </tr>
-    </table>
+            <!-- 3. 계정 관리 버튼
+            <section class="d-grid gap-2 mb-4">
+                <a th:href="@{/users/me/change-password}" class="btn btn-outline-secondary">비밀번호 변경</a>
+                <a th:href="@{/users/me/edit-email}" class="btn btn-outline-secondary">이메일 변경</a>
+                <button class="btn btn-danger" onclick="if(confirm('정말 탈퇴하시겠습니까?')) location.href='@{/users/me/delete}'">회원 탈퇴</button>
+            </section>
+             -->
+        </div>
 
-    <table>
-        <tr>
-            <th colspan="2" th:text = "|답글: ${#lists.size(member.replyList)} 개|"></th>
-        </tr>
-        <tr th:each = "item: ${member.replyList}" th:if="${itemStat.index}<5">
-            <td>
-                <a th:href = "@{|/post/detail/${item.post.id}|}" th:text = "${item.content}"></a>
-            </td>
-            <td th:text = "${#temporals.format(item.createDate, 'yy-MM-dd HH:mm:ss')}"></td>
-        </tr>
-    </table>
+    </div>
 </main>
 </html>

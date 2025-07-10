@@ -1,0 +1,40 @@
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate = "layout">
+<main layout:fragment = "content">
+    <div class="row">
+        <aside class="col-md-3 mb-4">
+            <nav th:replace = "~{mypage_nav :: mypageFrag}"></nav>
+        </aside>
+        <div class="col-md-9">
+            <div class="table-responsive">
+                <table class = "table align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th style = "width: 50%">제목</th>
+                        <th>작성자</th>
+                        <th>추천</th>
+                        <th>작성일</th>
+                    </tr>
+                    </thead>
+                    <tr th:each = "reply: ${replies}">
+                        <td>
+                            <a th:href = "@{|/boards/${reply.board.id}|}"
+                               th:text = "${reply.board.title}">
+                            </a>
+                        </td>
+                        <td th:text = "${reply.board.user.username}"></td>
+                        <td th:text = "${reply.board.likeCount}"></td>
+                        <td th:text = "${#temporals.format(reply.createDate, 'yyyy-MM-dd HH:mm')}"></td>
+                    </tr>
+                    <tr th:if="${replies.empty}">
+                        <td colspan="4" class="text-center">좋아요를 누른 글이 없습니다.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+</html>

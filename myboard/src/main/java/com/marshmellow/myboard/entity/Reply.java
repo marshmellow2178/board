@@ -1,53 +1,70 @@
 package com.marshmellow.myboard.entity;
 
 import java.time.LocalDateTime;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+
+import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.util.Assert;
 
 @Getter
-@Setter
 @Entity
+@Table(name = "replies")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class Reply {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "reply_seq")
-	private int seq;
+	@Column(name = "id")
+	private long id;
 	
-	@Column(name = "reply_content")
+	@Column(name = "content")
 	private String content;
-	
+
+	@CreatedDate
 	@Column(name = "create_date")
 	private LocalDateTime createDate;
-	
+
+	@LastModifiedDate
 	@Column(name = "modify_date")
 	private LocalDateTime modifyDate;
 	
-	@Column(name = "board_seq")
-	private int boardSeq;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+	private User user;
 	
-	@Column(name = "user_seq")
-	private int userSeq;
-	
-	@Column(name = "reply_state")
-	private int state;
-	
-	@ManyToOne
-	@JoinColumn(name = "user_seq", insertable=false, updatable=false)
-	private UserInfo user;
-	
-	@ManyToOne
-	@JoinColumn(name = "board_seq", insertable=false, updatable=false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "board_id")
 	private Board board;
-	
-	public void setUser(UserInfo user) {
-		this.user = user;
-		this.userSeq = user.getSeq();
+
+	//생성
+	public static Reply create(
+			String content,
+			Board board,
+			User user
+	){
+		Assert.notNull(board, "Board must not be null");
+		Assert.notNull(user, "User must not be null");
+		Assert.hasText(content, "Content cannot be empty");
+
+		Reply reply = new Reply();
+		reply.content = content;
+		reply.board = board;
+		reply.user = user;
+		return reply;
+	}
+
+	//수정
+	public void update(
+			String content
+	){
+		Assert.hasText(content, "Content cannot be empty");
+
+		this.content = content;
 	}
 }

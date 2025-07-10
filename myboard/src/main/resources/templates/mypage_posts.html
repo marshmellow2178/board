@@ -1,0 +1,60 @@
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate = "layout">
+<main layout:fragment = "content">
+    <div class="row">
+        <aside class="col-md-3 mb-4">
+            <nav th:replace = "~{mypage_nav :: mypageFrag}"></nav>
+        </aside>
+        <div class="col-md-9">
+            <div class="table-responsive">
+                <table class = "table align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th style = "width: 50%">제목</th>
+                        <th>작성자</th>
+                        <th>추천</th>
+                        <th>작성일</th>
+                    </tr>
+                    </thead>
+                    <tr th:each = "board: ${boardPage}">
+                        <td>
+                            <a th:href = "@{|/boards/${board.id}|}"
+                               th:text = "${board.title}">
+                            </a>
+                        </td>
+                        <td th:text = "${board.user.username}"></td>
+                        <td th:text = "${board.likeCount}"></td>
+                        <td th:text = "${#temporals.format(board.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                    </tr>
+                    <tr th:if="${boardPage.empty}">
+                        <td colspan="4" class="text-center">등록된 글이 없습니다.</td>
+                    </tr>
+                </table>
+            </div>
+
+            <ul class="pagination" th:if="${!boardPage.empty}">
+                <li th:if="${boardPage.hasPrevious()}" class="page-item"
+                    th:classappend="${boardPage.hasPrevious()} ? '' : 'disabled'">
+                    <a class="page-link" th:href="@{/boards(page=${boardPage.number - 1}, keyword=${keyword})}">이전</a>
+                </li>
+                <li th:each="i : ${#numbers.sequence(0, boardPage.totalPages - 1)}"
+                    th:classappend="${i == boardPage.number} ? 'active'"
+                    class="page-item">
+                    <a th:href="@{/boards(page=${i}, keyword=${keyword})}"
+                       th:text="${i + 1}"
+                       class="page-link"></a>
+                </li>
+                <li th:if="${boardPage.hasNext()}"
+                    class="page-item"
+                    th:classappend="${boardPage.hasNext()} ? '' : 'disabled'">
+                    <a th:href="@{/boards(page=${boardPage.number + 1}, keyword=${keyword})}"
+                       class="page-link">다음</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</main>
+</html>

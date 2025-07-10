@@ -6,7 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.marshmellow.myboard.entity.Board;
 
-public interface BoardRepo extends JpaRepository<Board, Integer> {
+public interface BoardRepository extends JpaRepository<Board, Long> {
 	Page<Board> findByTitleContaining(Pageable pageable, String keyword);
-	Board findBySeq(int seq);
+
+    Page<Board> findByUserId(Long id, Pageable pageable);
+    Long countByUserId(Long id);
 }

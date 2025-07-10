@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Board</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('#mainNav a').forEach(link => {
+                // 링크의 href가 현재 경로로 시작하면 active
+                if (currentPath.startsWith(link.getAttribute('href'))) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const parts = window.location.pathname.split('/');
+            const key = parts[3] || 'info';
+            const link = document.querySelector('#mypageNav a[data-menu="' + key + '"]');
+            if (link) link.classList.add('active');
+        });
+    </script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light" id="mainNav">
+    <div class="container">
+    <a class="navbar-brand" href = "/">MyBoard</a>
+    <ul class="navbar-nav ms-auto d-flex flex-row">
+        <li class="nav-item me-3">
+            <a href = "/boards"
+               class = "nav-link">자유게시판
+            </a>
+        </li>
+        <li class="nav-item me-3">
+            <a href = "/login"
+               class = "nav-link"
+               sec:authorize="isAnonymous()"
+                >로그인</a>
+        </li>
+        <li class="nav-item me-3">
+            <a href = "/logout"
+               class = "nav-link"
+               sec:authorize="isAuthenticated()"
+                >로그아웃</a>
+        </li>
+        <li class = "nav-item">
+            <a href = "/users/signup"
+               sec:authorize="isAnonymous()"
+               class="nav-link">회원가입</a>
+        </li>
+        <li class="nav-item">
+            <a href = "/users/me"
+               sec:authorize="isAuthenticated()"
+               class = "nav-link">마이페이지</a>
+        </li>
+    </ul>
+    </div>
+</nav>
+
+<div class="container my-4" layout:fragment = "content"></div>
+<footer>
+
+</footer>
+
+</body>
+</html>

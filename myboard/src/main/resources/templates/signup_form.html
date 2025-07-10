@@ -1,25 +1,52 @@
-<html layout:decorate = "~{layout}">
-<main layout:fragment = "content" class = "container">
-    <form th:action = "@{/member/signup}" th:object="${signUpForm}" method="post">
-        <fieldset>
-            <legend>회원가입</legend>
-            <div th:replace="~{form_err :: formErrFragment}"></div>
-        
-            <label for="uid">ID</label>
-            <input type="text" th:field = "*{uid}" required>
-    
-            <label for="pw">PW</label>
-            <input type="password" th:field="*{pw}" required>
-    
-            <label for="pw2">PW Check</label>
-            <input type="password" th:field="*{pw2}" required>
-    
-            <label for="email">Email</label>
-            <input type="email" th:field="*{email}" required>
-    
-            <input type="submit">
-        </fieldset>
-        
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate = "~{layout}">
+<main layout:fragment = "content">
+    <form th:action = "@{/users/signup}" th:object="${signUpForm}" method="post">
+
+        <!-- Flash message -->
+        <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+
+        <div class="mb-3">
+            <label class="form-label">ID</label>
+            <input type="text" th:field = "*{username}" required
+            class="form-control">
+            <div class="form-text text-danger"
+                 th:if="${#fields.hasErrors('username')}"
+                 th:errors="*{username}"></div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">PW</label>
+            <input type="password" th:field="*{password}" required
+                class="form-control">
+            <div class="form-text text-danger"
+                 th:if="${#fields.hasErrors('password')}"
+                 th:errors="*{password}"></div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">PW Check</label>
+            <input type="password" th:field="*{password2}" required
+                class="form-control">
+            <div class="form-text text-danger"
+                 th:if="${#fields.hasErrors('password2')}"
+                 th:errors="*{password2}"></div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" th:field="*{email}" required class="form-control">
+            <div class="form-text text-danger"
+                 th:if="${#fields.hasErrors('email')}"
+                 th:errors="*{email}"></div>
+        </div>
+
+        <div class="d-grid">
+            <input type="submit" class="btn btn-primary btn-lg" value="회원가입">
+        </div>
     </form>
 </main>
 </html>

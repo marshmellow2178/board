@@ -1,55 +1,102 @@
 package com.marshmellow.myboard.entity;
 
 import java.time.LocalDateTime;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+
+import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.util.Assert;
 
 @Getter
-@Setter
 @Entity
+@Table(name = "board")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class Board {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "board_seq")
-	private int seq;
+	@Column(name = "id")
+	private long id;
 	
-	@Column(name = "board_title")
+	@Column(name = "title", length = 50)
 	private String title;
+
+	@Column(name = "author", length = 30)
+	private String author;
 	
-	@Column(name = "board_content")
+	@Column(name = "content", columnDefinition = "TEXT")
 	private String content;
 	
-	@Column(name = "board_like")
-	private int like;
+	@Column(name = "like_count")
+	private int likeCount = 0;
 	
-	@Column(name = "board_read")
-	private int read;
-	
-	@Column(name = "board_state")
-	private int state;
-	
+	@Column(name = "view_count")
+	private int viewCount = 0;
+
+	@CreatedDate
 	@Column(name = "create_date")
-	private LocalDateTime createDate;
-	
+	private LocalDateTime createdAt;
+
+	@LastModifiedDate
 	@Column(name = "modify_date")
-	private LocalDateTime modifyDate;
-	
-	@Column(name = "user_seq")
-	private int userSeq;
-	
-	@ManyToOne
-	@JoinColumn(name = "user_seq", insertable=false, updatable=false)
-	private UserInfo user;
-	
-	public void setUser(UserInfo user) {
-		this.user = user;
-		this.userSeq = user.getSeq();
+	private LocalDateTime modifiedAt;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
+
+	//생성
+	public static Board create(
+			String title,
+			String content,
+			User user
+	){
+		Assert.hasText(title, "Title cannot be empty");
+		Assert.hasText(content, "Content cannot be empty");
+		Board board = new Board();
+		board.title = title;
+		board.content = content;
+		board.user = user;
+		board.author = user.getUsername();
+		board.viewCount = 0;
+		board.likeCount = 0;
+		return board;
+	}
+
+	//수정
+	public void update(
+			String title,
+			String content
+	){
+		Assert.hasText(title, "Title cannot be empty");
+		Assert.hasText(content, "Content cannot be empty");
+		this.title = title;
+		this.content = content;
+		this.modifiedAt = LocalDateTime.now();
+	}
+
+	//조회수
+	public void incrementViewCount(){
+		this.viewCount++;
+	}
+
+	/**
+	 * Increment like count by one.
+	 */
+	public void incrementLikeCount() {
+		this.likeCount++;
+	}
+
+	/**
+	 * Decrement like count by one.
+	 */
+	public void decrementLikeCount() {
+		if (this.likeCount > 0) {
+			this.likeCount--;
+		}
 	}
 }
